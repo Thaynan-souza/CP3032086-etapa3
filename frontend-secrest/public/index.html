@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Solicitar Acesso</title>
+    <style> body { font-family: Arial; padding: 50px; } form { display: flex; flex-direction: column; width: 300px; gap: 10px; } </style>
+</head>
+<body>
+    <h2>Bem-vindo ao Secrest</h2>
+    <p>Digite seu e-mail para receber o código de acesso.</p>
+    
+    <form action="/send-code" method="POST">
+        <label>E-mail:</label>
+        <input type="email" name="email" required placeholder="seu_email@ifsp.edu.br">
+        <button type="submit">Enviar Código</button>
+    </form>
+</body>
+</html>

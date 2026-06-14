@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificar Código</title>
+    <style> body { font-family: Arial; padding: 50px; } form { display: flex; flex-direction: column; width: 300px; gap: 10px; } </style>
+</head>
+<body>
+    <h2>Verificação de Segurança</h2>
+    <p>Enviamos um código de 6 dígitos para o seu e-mail.</p>
+    
+    <form action="/verify-code" method="POST">
+        <label>E-mail:</label>
+        <input type="email" name="email" id="emailInput" readonly required>
+        
+        <label>Código:</label>
+        <input type="text" name="code" required placeholder="Ex: 123456" maxlength="6">
+        
+        <button type="submit">Verificar e Entrar</button>
+    </form>
+
+    <script>
+        // Pega o email da URL (ex: /verify?email=thaynan@teste.com) e coloca no campo
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        if(email) {
+            document.getElementById('emailInput').value = email;
+        }
+    </script>
+</body>
+</html>
