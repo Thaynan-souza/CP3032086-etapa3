@@ -3,7 +3,9 @@ package com.exemplo.secrest.controller;
 import com.exemplo.secrest.dto.CreateUserDto;
 import com.exemplo.secrest.dto.LoginUserDto;
 import com.exemplo.secrest.dto.RecoveryJwtTokenDto;
+import com.exemplo.secrest.dto.UpdateProfileDto; // <-- Novo DTO importado
 import com.exemplo.secrest.dto.UserProfileDto;
+import com.exemplo.secrest.entity.User; // <-- Entidade User importada
 import com.exemplo.secrest.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,6 +52,26 @@ public class UserController {
     public ResponseEntity<UserProfileDto> getCurrentUser(Authentication authentication) {
         String email = authentication.getName();
         UserProfileDto userProfile = userService.getUserProfile(email);
+        return ResponseEntity.ok(userProfile);
+    }
+
+    // ==========================================
+    // ROTA DA ETAPA 4: Atualizar Perfil
+    // ==========================================
+    @PostMapping("/update-profile")
+    public ResponseEntity<UserProfileDto> updateProfile(
+            Authentication authentication, 
+            @RequestBody UpdateProfileDto dto) {
+        
+        // 1. Extrai o e-mail de quem está logado diretamente do Token JWT
+        String email = authentication.getName();
+        
+        // 2. Chama o serviço para atualizar o nome e o cargo no banco
+        User updated = userService.updateProfile(email, dto);
+        
+        // 3. Usa o método do seu Desafio Prático para converter e retornar o DTO
+        UserProfileDto userProfile = userService.getUserProfile(updated.getEmail());
+        
         return ResponseEntity.ok(userProfile);
     }
 }

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Completar Perfil</title>
+    <style> body { font-family: Arial; padding: 50px; } form { display: flex; flex-direction: column; width: 300px; gap: 15px; } </style>
+</head>
+<body>
+    <h2>Complete o seu Cadastro</h2>
+    <p>Escolha o seu nome e qual será o seu cargo no sistema.</p>
+    
+    <form id="registerForm">
+        <label>Nome Completo:</label>
+        <input type="text" id="nameInput" required placeholder="Ex: Thaynan Souza">
+        
+        <label>Cargo (Role):</label>
+        <select id="roleInput" required>
+            <option value="ROLE_CUSTOMER">Cliente (Customer)</option>
+            <option value="ROLE_ADMINISTRATOR">Administrador (Admin)</option>
+        </select>
+        
+        <button type="submit">Salvar e Entrar</button>
+    </form>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Impede o formulário de recarregar a página
+            
+            const name = document.getElementById('nameInput').value;
+            const role = document.getElementById('roleInput').value;
+            const token = sessionStorage.getItem('jwt_token');
+
+            if (!token) {
+                alert("Sessão inválida! Por favor, solicite o código novamente.");
+                window.location.href = '/';
+                return;
+            }
+
+            // Envia os dados e o Token via AJAX (Fetch API) para o nosso proxy no server.js
+            const response = await fetch('/register-profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': token
+                },
+                body: JSON.stringify({ name, role })
+            });
+
+            if (response.ok) {
+                window.location.href = '/dashboard'; // Sucesso! Vai pro Dashboard!
+            } else {
+                alert("Erro ao salvar o perfil.");
+            }
+        });
+    </script>
+</body>
+</html>

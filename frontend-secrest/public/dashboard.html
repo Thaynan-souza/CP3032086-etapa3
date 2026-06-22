@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard Secrest</title>
+    <style> 
+        body { font-family: Arial; padding: 50px; } 
+        button { padding: 10px; margin: 10px 5px 10px 0; cursor: pointer; }
+        #resultado { margin-top: 20px; padding: 15px; background: #f4f4f4; border: 1px solid #ccc; display: none; }
+    </style>
+</head>
+<body>
+    <h2>Área Restrita (Dashboard)</h2>
+    <p>Bem-vindo! Você está autenticado no sistema Secrest.</p>
+    
+    <div>
+        <button onclick="testarEndpoint()">Testar endpoint protegido</button>
+        <button onclick="verPerfil()">Meu perfil</button>
+        <button onclick="sair()" style="background-color: #ff4c4c; color: white;">Sair</button>
+    </div>
+
+    <pre id="resultado"></pre>
+
+    <script>
+        const token = sessionStorage.getItem('jwt_token');
+        const resultadoDiv = document.getElementById('resultado');
+
+        // Se a pessoa tentar acessar o dashboard sem token, é chutada para a página inicial!
+        if (!token) {
+            window.location.href = '/';
+        }
+
+        async function testarEndpoint() {
+            const response = await fetch('/api/protected', { headers: { 'Authorization': token } });
+            const text = await response.text();
+            mostrarResultado("Resposta do Backend (Protegido):\n" + text);
+        }
+
+        async function verPerfil() {
+            const response = await fetch('/api/me', { headers: { 'Authorization': token } });
+            const data = await response.json();
+            mostrarResultado("Dados do seu Perfil:\n" + JSON.stringify(data, null, 2));
+        }
+
+        function sair() {
+            sessionStorage.removeItem('jwt_token'); // Apaga a "chave"
+            window.location.href = '/';
+        }
+
+        function mostrarResultado(texto) {
+            resultadoDiv.style.display = 'block';
+            resultadoDiv.innerText = texto;
+        }
+    </script>
+</body>
+</html>

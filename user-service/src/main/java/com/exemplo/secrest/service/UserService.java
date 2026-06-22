@@ -3,6 +3,7 @@ package com.exemplo.secrest.service;
 import com.exemplo.secrest.dto.CreateUserDto;
 import com.exemplo.secrest.dto.LoginUserDto;
 import com.exemplo.secrest.dto.RecoveryJwtTokenDto;
+import com.exemplo.secrest.dto.UpdateProfileDto;
 import com.exemplo.secrest.dto.UserProfileDto;
 import com.exemplo.secrest.entity.Role;
 import com.exemplo.secrest.entity.User;
@@ -15,7 +16,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,15 +46,14 @@ public class UserService {
 
     public void createUser(CreateUserDto createDto) {
         User newUser = User.builder()
-                .name(createDto.name()) // Agora o nome é salvo no banco!
+                .name(createDto.name())
                 .email(createDto.email())
                 .password(passwordEncoder.encode(createDto.password()))
-                .roles(List.of(Role.builder().name(createDto.role()).build())) // Role extraída corretamente!
+                .roles(List.of(Role.builder().name(createDto.role()).build()))
                 .build();
         userRepository.save(newUser);
     }
     
-    // Método adicionado para o Desafio Prático
     public UserProfileDto getUserProfile(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
@@ -61,5 +63,23 @@ public class UserService {
                 .toList();
 
         return new UserProfileDto(user.getId(), user.getEmail(), roles);
+    }
+
+    // ==========================================
+    // MÉTODO ETAPA 4 (Corrigido e blindado)
+    // ==========================================
+    @Transactional
+    public User updateProfile(String email, UpdateProfileDto dto) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado."));
+
+        user.setName(dto.name());
+
+        // Usa uma lista mutável para o Hibernate não quebrar!
+        List<Role> novasRoles = new ArrayList<>();
+        novasRoles.add(Role.builder().name(dto.role()).build());
+        user.setRoles(novasRoles);
+
+        return userRepository.save(user);
     }
 }

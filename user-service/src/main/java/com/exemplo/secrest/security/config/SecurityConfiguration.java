@@ -24,7 +24,8 @@ public class SecurityConfiguration {
             "/users/login",
             "/users",
             "/auth/request-code",
-            "/auth/verify-code"
+            "/auth/verify-code",
+            "/error"
     };
 
     // ENDPOINTS COM ACESSO RESTRITO
